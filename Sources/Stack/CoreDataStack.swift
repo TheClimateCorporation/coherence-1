@@ -34,6 +34,7 @@ import TraceLog
           - managedObjectModel: A managed object model.
           - storeNamePrefix: A unique name prefix for the persistent store to be created.
     */
+    @objc
     public init(managedObjectModel model: NSManagedObjectModel, storeNamePrefix: String) throws {
         impl = try CoreDataStackType(managedObjectModel: model, storeNamePrefix: storeNamePrefix, logTag: String(describing: CoreDataStack.self))
     }

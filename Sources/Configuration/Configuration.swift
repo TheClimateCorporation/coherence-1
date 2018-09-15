@@ -154,14 +154,15 @@ private func loadObject(_ conformingProtocol: Protocol, anObject: NSObject, bund
     var propertyCount: UInt32 = 0
     let properties = protocol_copyPropertyList(conformingProtocol, &propertyCount)
     
-    defer { properties?.deinitialize()
-        properties?.deallocate(capacity: 1)
+    defer {
+        properties?.deinitialize(count: Int(propertyCount))
+        properties?.deallocate()
     }
     
     for index in 0..<propertyCount {
         let property = properties?[Int(index)]
         
-        if let propertyName = String(validatingUTF8: property_getName(property)) {
+        if let propertyName = String(validatingUTF8: property_getName(property!)) {
             
             if let value = values?[propertyName] {
                 
@@ -172,7 +173,7 @@ private func loadObject(_ conformingProtocol: Protocol, anObject: NSObject, bund
                 anObject.setValue(value, forKey: propertyName)
             } else {
                 
-                if errorString.characters.count == 0 {
+                if errorString.count == 0 {
                     errorString += "The following keys were missing from the info.plist and no default was supplied, a value is required.\r"
                 }
                 errorString += "\t\(propertyName)\r"
@@ -180,7 +181,7 @@ private func loadObject(_ conformingProtocol: Protocol, anObject: NSObject, bund
         }
     }
     
-    if errorString.characters.count > 0  {
+    if errorString.count > 0  {
         logError { errorString }
         
         throw Errors.failedInitialization(message: "Failed to load \(String(describing: anObject)) for protocol \(String(describing: conformingProtocol)), Required values were missing from the info.plist and no default values were found.")

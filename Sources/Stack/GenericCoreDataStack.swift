@@ -252,7 +252,7 @@ open class GenericCoreDataStack<CoordinatorType: NSPersistentStoreCoordinator, C
                 var userInfo: [AnyHashable: Any] = error.userInfo 
                 userInfo[NSLocalizedDescriptionKey] = message
 
-                throw  NSError(domain: error.domain, code: error.code, userInfo: userInfo)
+                throw  NSError(domain: error.domain, code: error.code, userInfo: userInfo as? [String : Any])
                 
         } catch let error as NSError {
 
@@ -263,7 +263,7 @@ open class GenericCoreDataStack<CoordinatorType: NSPersistentStoreCoordinator, C
             var userInfo: [AnyHashable: Any] = error.userInfo
             userInfo[NSLocalizedDescriptionKey] = message
 
-            throw  NSError(domain: error.domain, code: error.code, userInfo: userInfo)
+            throw  NSError(domain: error.domain, code: error.code, userInfo: userInfo as? [String : Any])
         }
     }
     
@@ -279,7 +279,7 @@ open class GenericCoreDataStack<CoordinatorType: NSPersistentStoreCoordinator, C
         }
     }
     
-    fileprivate dynamic func handleContextDidSaveNotification(_ notification: Notification)  {
+    @objc fileprivate dynamic func handleContextDidSaveNotification(_ notification: Notification)  {
         
         if let context = notification.object as? NSManagedObjectContext {
             
