@@ -220,10 +220,11 @@ open class GenericCoreDataStack<CoordinatorType: NSPersistentStoreCoordinator, C
                     logInfo(tag) { "Checking to see if persistent store is compatible with the model." }
                     
                     let metadata = try NSPersistentStoreCoordinator.metadataForPersistentStore(ofType: storeType, at: storeURL, options: nil)
-                    logTrace(4) { "metadata: \(metadata)" }
-                    
+
                     if !persistentStoreCoordinator.managedObjectModel.isConfiguration(withName: configuration, compatibleWithStoreMetadata: metadata) {
-                        
+
+                        logInfo { "Store not compatible with metadata, removing stores..." }
+
                         try deleteIfExists(storePath)
                         try deleteIfExists(storeShmPath)
                         try deleteIfExists(storeWalPath)
