@@ -55,9 +55,14 @@ class GenericCoreDataStackTests: XCTestCase {
         let prefix = String(describing: type(of: model.self))
         
         do {
-            let _ = try CoreDataStackType(managedObjectModel: model, storeNamePrefix: prefix)
+            let stack = try CoreDataStackType(managedObjectModel: model, storeNamePrefix: prefix)
             
             XCTAssertTrue(try persistentStoreExists(storePrefix: prefix, storeType: defaultStoreType))
+
+            // Cleanup after test.
+            try stack.persistentStoreCoordinator.persistentStores.forEach { (store) throws in
+                try stack.persistentStoreCoordinator.remove(store)
+            }
         } catch {
             XCTFail(error.localizedDescription)
         }
@@ -73,9 +78,14 @@ class GenericCoreDataStackTests: XCTestCase {
         options[overwriteIncompatibleStoreOption] = true
         
         do {
-            let _ = try CoreDataStackType(managedObjectModel: model, storeNamePrefix: prefix, configurationOptions: [defaultModelConfigurationName: (storeType: NSSQLiteStoreType, storeOptions: options, migrationManager: nil)])
+            let stack = try CoreDataStackType(managedObjectModel: model, storeNamePrefix: prefix, configurationOptions: [defaultModelConfigurationName: (storeType: NSSQLiteStoreType, storeOptions: options, migrationManager: nil)])
             
             XCTAssertTrue(try persistentStoreExists(storePrefix: prefix, storeType: defaultStoreType))
+
+            // Cleanup after test.
+            try stack.persistentStoreCoordinator.persistentStores.forEach { (store) throws in
+                try stack.persistentStoreCoordinator.remove(store)
+            }
         } catch {
             XCTFail(error.localizedDescription)
         }
@@ -87,9 +97,14 @@ class GenericCoreDataStackTests: XCTestCase {
         let prefix = String(describing: type(of: model.self))
         
         do {
-            let _ = try CoreDataStackType(managedObjectModel: model, storeNamePrefix: prefix, configurationOptions: [:])
+            let stack = try CoreDataStackType(managedObjectModel: model, storeNamePrefix: prefix, configurationOptions: [:])
             
             XCTAssertTrue(try persistentStoreExists(storePrefix: prefix, storeType: defaultStoreType))
+
+            // Cleanup after test.
+            try stack.persistentStoreCoordinator.persistentStores.forEach { (store) throws in
+                try stack.persistentStoreCoordinator.remove(store)
+            }
         } catch {
             XCTFail(error.localizedDescription)
         }
@@ -105,13 +120,18 @@ class GenericCoreDataStackTests: XCTestCase {
         
         do {
             /// TestModel2 has multiple configurations and should will produce multiple persistent stores.
-            let _ = try CoreDataStackType(managedObjectModel: model,
+            let stack = try CoreDataStackType(managedObjectModel: model,
                                           storeNamePrefix: prefix,
                                           configurationOptions: ["PersistentEntities": (storeType: NSSQLiteStoreType, storeOptions: options, migrationManager: nil),
                                                                  "TransientEntities":  (storeType: NSSQLiteStoreType, storeOptions: options, migrationManager: nil)])
             
             XCTAssertTrue(try persistentStoreExists(storePrefix: prefix, storeType: NSSQLiteStoreType, configuration: "PersistentEntities"))
             XCTAssertTrue(try persistentStoreExists(storePrefix: prefix, storeType: NSSQLiteStoreType, configuration: "TransientEntities"))
+
+            // Cleanup after test.
+            try stack.persistentStoreCoordinator.persistentStores.forEach { (store) throws in
+                try stack.persistentStoreCoordinator.remove(store)
+            }
         } catch {
             XCTFail(error.localizedDescription)
         }
@@ -127,13 +147,18 @@ class GenericCoreDataStackTests: XCTestCase {
         
         do {
             /// TestModel2 has multiple configurations and should will produce multiple persistent stores.
-            let _ = try CoreDataStackType(managedObjectModel: model,
+            let stack = try CoreDataStackType(managedObjectModel: model,
                                           storeNamePrefix: prefix,
                                           configurationOptions: ["PersistentEntities": (storeType: NSInMemoryStoreType, storeOptions: options, migrationManager: nil),
                                                                  "TransientEntities":  (storeType: NSInMemoryStoreType, storeOptions: options, migrationManager: nil)])
             
             XCTAssertFalse(try persistentStoreExists(storePrefix: prefix, storeType: NSInMemoryStoreType, configuration: "PersistentEntities"))
             XCTAssertFalse(try persistentStoreExists(storePrefix: prefix, storeType: NSInMemoryStoreType, configuration: "TransientEntities"))
+
+            // Cleanup after test.
+            try stack.persistentStoreCoordinator.persistentStores.forEach { (store) throws in
+                try stack.persistentStoreCoordinator.remove(store)
+            }
         } catch {
             XCTFail(error.localizedDescription)
         }
@@ -149,13 +174,18 @@ class GenericCoreDataStackTests: XCTestCase {
         
         do {
             /// TestModel2 has multiple configurations and should will produce multiple persistent stores.
-            let _ = try CoreDataStackType(managedObjectModel: model,
+            let stack = try CoreDataStackType(managedObjectModel: model,
                                           storeNamePrefix: prefix,
                                           configurationOptions: ["PersistentEntities": (storeType: NSSQLiteStoreType,   storeOptions: options, migrationManager: nil),
                                                                  "TransientEntities":  (storeType: NSInMemoryStoreType, storeOptions: options, migrationManager: nil)])
             
             XCTAssertTrue(try persistentStoreExists(storePrefix: prefix,  storeType: NSSQLiteStoreType,   configuration: "PersistentEntities"))
             XCTAssertFalse(try persistentStoreExists(storePrefix: prefix, storeType: NSInMemoryStoreType, configuration: "TransientEntities"))
+
+            // Cleanup after test.
+            try stack.persistentStoreCoordinator.persistentStores.forEach { (store) throws in
+                try stack.persistentStoreCoordinator.remove(store)
+            }
         } catch {
             XCTFail(error.localizedDescription)
         }
@@ -168,10 +198,15 @@ class GenericCoreDataStackTests: XCTestCase {
 
         do {
             /// TestModel2 has multiple configurations and should will produce multiple persistent stores.
-            let _ = try CoreDataStackType(managedObjectModel: model, storeNamePrefix: prefix)
+            let stack = try CoreDataStackType(managedObjectModel: model, storeNamePrefix: prefix)
             
             XCTAssertTrue(try persistentStoreExists(storePrefix: prefix, storeType: defaultStoreType, configuration: "PersistentEntities"))
             XCTAssertTrue(try persistentStoreExists(storePrefix: prefix, storeType: defaultStoreType, configuration: "TransientEntities"))
+
+            // Cleanup after test.
+            try stack.persistentStoreCoordinator.persistentStores.forEach { (store) throws in
+                try stack.persistentStoreCoordinator.remove(store)
+            }
         } catch {
             XCTFail(error.localizedDescription)
         }
@@ -182,10 +217,11 @@ class GenericCoreDataStackTests: XCTestCase {
         let model       = TestModel1()
         let prefix      = String(describing: type(of: model.self))
         let storeType   = NSSQLiteStoreType
-        
-        // Initialize model 2 (no configurations), with model 1s name
-        let _ = try CoreDataStackType(managedObjectModel: TestModel2(), storeNamePrefix: prefix)
-        
+
+        do {
+            // Initialize model 2 (no configurations), with model 1s name
+            let _ = try CoreDataStackType(managedObjectModel: TestModel2(), storeNamePrefix: prefix)
+        }
         let storeDate = try persistentStoreDate(storePrefix: prefix, storeType: storeType, configuration: nil)
         
         sleep(2)
@@ -194,7 +230,7 @@ class GenericCoreDataStackTests: XCTestCase {
         options[overwriteIncompatibleStoreOption] = true
 
         // Now use model 1 with model 1s name
-        let _ = try CoreDataStackType(managedObjectModel: model, storeNamePrefix: prefix, configurationOptions: [defaultModelConfigurationName: (storeType: storeType, storeOptions: options, migrationManager: nil)])
+        let stack = try CoreDataStackType(managedObjectModel: model, storeNamePrefix: prefix, configurationOptions: [defaultModelConfigurationName: (storeType: storeType, storeOptions: options, migrationManager: nil)])
         
         XCTAssertTrue(try persistentStoreDate(storePrefix: prefix, storeType: storeType, configuration: nil) > storeDate)
     }
@@ -206,49 +242,60 @@ class GenericCoreDataStackTests: XCTestCase {
         let storeType   = NSSQLiteStoreType
 
         // Initialize model 2 (no configurations), with model 1s name
-        let _ = try CoreDataStackType(managedObjectModel: TestModel2(), storeNamePrefix: prefix)
+        let stack = try CoreDataStackType(managedObjectModel: TestModel2(), storeNamePrefix: prefix)
 
         // Now use model 1 with model 1s name
         XCTAssertThrowsError(try CoreDataStackType(managedObjectModel: model, storeNamePrefix: prefix, configurationOptions: [defaultModelConfigurationName: (storeType: storeType, storeOptions: [:], migrationManager: nil)]))
+
+        // Cleanup after stack.
+        try stack.persistentStoreCoordinator.persistentStores.forEach { (store) throws in
+            try stack.persistentStoreCoordinator.remove(store)
+        }
     }
 
     func testConstruction_WithAsyncErrorHandler() {
-        
+
         let model  = TestModel1()
         let prefix = String(describing: type(of: model.self))
-        
+
         do {
-            let _ = try CoreDataStackType(managedObjectModel: model, storeNamePrefix: prefix, asyncErrorBlock: { (error) -> Void in
+            let stack = try CoreDataStackType(managedObjectModel: model, storeNamePrefix: prefix, asyncErrorBlock: { (error) -> Void in
+
                 // Async Error block
                 print(error.localizedDescription)
             })
-            
+
             XCTAssertTrue(try persistentStoreExists(storePrefix: prefix, storeType: defaultStoreType))
+
+            // Cleanup after test.
+            try stack.persistentStoreCoordinator.persistentStores.forEach { (store) throws in
+                try stack.persistentStoreCoordinator.remove(store)
+            }
         } catch {
             XCTFail(error.localizedDescription)
         }
     }
-    
+
     func testCRUD () throws {
-        
+
         let model  = TestModel1()
         let prefix = String(describing: type(of: model.self))
-        
+
         let coreDataStack = try CoreDataStackType(managedObjectModel: model, storeNamePrefix: prefix)
-        
+
         let editContext       = coreDataStack.editContext()
         let mainThreadContext = coreDataStack.mainThreadContext()
-        
+
         var userId: NSManagedObjectID? = nil
-        
+
         editContext.performAndWait {
-            
+
             if let insertedUser = NSEntityDescription.insertNewObject(forEntityName: "User", into:editContext) as? User {
-                
+
                 insertedUser.firstName = firstName
                 insertedUser.lastName  = lastName
                 insertedUser.userName  = userName
-                
+
                 do {
                     try editContext.save()
                 } catch {
@@ -257,26 +304,25 @@ class GenericCoreDataStackTests: XCTestCase {
                 userId = insertedUser.objectID
             }
         }
-        
+
         var savedUser: NSManagedObject? = nil
-        
+
         mainThreadContext.performAndWait {
             if let userId = userId {
                 savedUser = mainThreadContext.object(with: userId)
             }
         }
-        
+
         XCTAssertNotNil(savedUser)
-        
+
         if let savedUser = savedUser as? User {
-            
+
             XCTAssertTrue(savedUser.firstName == firstName)
             XCTAssertTrue(savedUser.lastName  == lastName)
             XCTAssertTrue(savedUser.userName  == userName)
-            
+
         } else {
             XCTFail()
         }
     }
-
 }
