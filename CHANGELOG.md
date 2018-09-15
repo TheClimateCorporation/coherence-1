@@ -1,6 +1,13 @@
 # Change Log
 All significant changes to this project will be documented in this file.
 
+## [2.1.0](https://github.com/tonystone/coherence/releases/tag/2.1.0) 
+
+#### Changes
+- Changed minimum deployment target on iOS to 9.0.
+- Updated to Swift 4.1.
+- Expanded TraceLog Cocopaods compatible versions to include < 5.0 (>= 2.0 && < 5.0).
+
 ## [2.0.3](https://github.com/tonystone/coherence/releases/tag/2.0.3) 
 
 #### Added
