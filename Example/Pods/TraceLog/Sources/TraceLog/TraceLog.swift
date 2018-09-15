@@ -21,24 +21,70 @@ import Swift
 import Foundation
 
 ///
-/// Initializes TraceLog with an optional array of Writers and the Environment.
+/// Initializes TraceLog with an optional mode, array of Writers and the Environment.
 ///
 /// This call is optional but in order to read from the environment on start up,
-/// This method must be called.
+/// this method must be called.
 ///
 /// - Parameters:
+///     - mode:        The `ConcurrencyMode` to run all `Writer`s in. Async is the default.
 ///     - writers:     An Array of objects that implement the Writer protocol used to process messages that are logged. Note the writers are called in the order they are in this array.
 ///     - environment: Either a Dictionary<String, String> or an Environment object that contains the key/value pairs of configuration variables for TraceLog.
 ///
-/// Example:
+/// - Example:
+///
+/// Start TraceLog in the default mode, with default writers.
+/// ```
+///     TraceLog.configure()
+/// ```
+///
+/// Start TraceLog the with default writer in `.direct` mode.
+/// ```
+///     TraceLog.configure(mode: .direct)
+/// ```
+///
+/// Start TraceLog in the default mode, replacing the default writer with `MyWriter` reading the environment for log level settings.
+/// ```
+///     TraceLog.configure(writers: [MyWriter()])
+/// ```
+///
+/// Start TraceLog in the default mode, replacing the default writer with `MyWriter` and setting log levels programmatically.
 /// ```
 ///     TraceLog.configure(writers: [MyWriter()], environment: ["LOG_ALL": "TRACE4",
 ///                                                              "LOG_PREFIX_NS" : "ERROR",
 ///                                                              "LOG_TAG_TraceLog" : "TRACE4"])
 /// ```
 ///
-public
-func configure(writers: [Writer] = [ConsoleWriter()], environment: Environment = Environment()) {
+public func configure(mode: ConcurrencyMode = .default, writers: [Writer] = [ConsoleWriter()], environment: Environment = Environment()) {
+    #if !TRACELOG_DISABLED
+        Logger.configure(writers: writers.map( { mode.writerMode(for: $0) } ), environment: environment)
+    #endif
+}
+
+///
+/// Initializes TraceLog with an optional array of Writers specifying thier ConcurrencyMode and the Environment.
+///
+/// - Parameters:
+///     - writers:     An Array of `Writers` wrapped in a `WriterConcurrencyMode`.
+///     - environment: Either a Dictionary<String, String> or an Environment object that contains the key/value pairs of configuration variables for TraceLog.
+///
+/// - Example:
+///
+/// Start TraceLog replacing the default writer with `MyWriter` running in `.direct` mode, `MyHTTPWriter`
+/// in `.async` mode, and reading the environment for log level settings.
+/// ```
+///     TraceLog.configure(writers: [.direct(MyWriter()), .async(MyHTTPWriter())])
+/// ```
+///
+/// Start TraceLog replacing the default writer with `MyWriter` running in `.async` mode and  setting log
+/// levels programmatically.
+/// ```
+///     TraceLog.configure(writers: [.async(MyWriter())], environment: ["LOG_ALL": "TRACE4",
+///                                                                     "LOG_PREFIX_NS" : "ERROR",
+///                                                                     "LOG_TAG_TraceLog" : "TRACE4"])
+/// ```
+///
+public func configure(writers: [WriterConcurrencyMode], environment: Environment = Environment()) {
     #if !TRACELOG_DISABLED
         Logger.configure(writers: writers, environment: environment)
     #endif
@@ -70,11 +116,10 @@ func configure(writers: [Writer] = [ConsoleWriter()], environment: Environment =
 ///         return "Final message String"
 ///     }
 /// ```
-public
-func logError(_ tag: String? = nil, _ file: String = #file, _ function: String = #function, _ line: Int = #line, message: @escaping () -> String) {
+public func logError(_ tag: String? = nil, _ file: String = #file, _ function: String = #function, _ line: Int = #line, message: @escaping () -> String) {
     #if !TRACELOG_DISABLED
         let derivedTag = derivedTagIfNil(file: file, tag: tag)
-        
+
         Logger.logPrimitive(level: LogLevel.error, tag: derivedTag, file: file, function: function, line: line, message: message)
     #endif
 }
@@ -105,11 +150,10 @@ func logError(_ tag: String? = nil, _ file: String = #file, _ function: String =
 ///         return "Final message String"
 ///     }
 /// ```
-public
-func logWarning(_ tag: String? = nil, _ file: String = #file, _ function: String = #function, _ line: Int = #line, message:  @escaping () -> String) {
+public func logWarning(_ tag: String? = nil, _ file: String = #file, _ function: String = #function, _ line: Int = #line, message:  @escaping () -> String) {
     #if !TRACELOG_DISABLED
         let derivedTag = derivedTagIfNil(file: file, tag: tag)
-        
+
         Logger.logPrimitive(level: LogLevel.warning, tag: derivedTag, file: file, function: function, line: line, message: message)
     #endif
 }
@@ -139,11 +183,10 @@ func logWarning(_ tag: String? = nil, _ file: String = #file, _ function: String
 ///         return "Final message String"
 /// ```
 ///
-public
-func logInfo(_ tag: String? = nil, _ file: String = #file, _ function: String = #function, _ line: Int = #line, message:  @escaping () -> String) {
+public func logInfo(_ tag: String? = nil, _ file: String = #file, _ function: String = #function, _ line: Int = #line, message:  @escaping () -> String) {
     #if !TRACELOG_DISABLED
         let derivedTag = derivedTagIfNil(file: file, tag: tag)
-        
+
         Logger.logPrimitive(level: LogLevel.info, tag: derivedTag, file: file, function: function, line: line, message: message)
     #endif
 }
@@ -180,14 +223,13 @@ func logInfo(_ tag: String? = nil, _ file: String = #file, _ function: String = 
 ///     }
 /// ```
 ///
-public
-func logTrace(_ tag: String? = nil, level: Int = LogLevel.rawTraceLevels.lowerBound, _ file: String = #file, _ function: String = #function, _ line: Int = #line, message: @escaping () -> String) {
+public func logTrace(_ tag: String? = nil, level: Int = LogLevel.trace1.rawValue, _ file: String = #file, _ function: String = #function, _ line: Int = #line, message: @escaping () -> String) {
     #if !TRACELOG_DISABLED
-        assert(LogLevel.rawTraceLevels.contains(level), "Invalid trace level, levels are in the range of \(LogLevel.rawTraceLevels)")
-        
+        assert(LogLevel.validTraceLevels.contains(level), "Invalid trace level, levels are in the range of \(LogLevel.validTraceLevels)")
+
         let derivedTag = derivedTagIfNil(file: file, tag: tag)
-        
-        Logger.logPrimitive(level: LogLevel(rawValue: LogLevel.trace1.rawValue + level - 1)!, tag: derivedTag, file: file, function: function, line: line, message: message)
+
+        Logger.logPrimitive(level: LogLevel(rawValue: LogLevel.trace1.rawValue + level - 1)!, tag: derivedTag, file: file, function: function, line: line, message: message)    // swiftlint:disable:this force_unwrapping
     #endif
 }
 
@@ -222,23 +264,20 @@ func logTrace(_ tag: String? = nil, level: Int = LogLevel.rawTraceLevels.lowerBo
 ///     }
 /// ```
 ///
-public
-func logTrace(_ level: Int, _ file: String = #file, _ function: String = #function, _ line: Int = #line, message: @escaping () -> String) {
+public func logTrace(_ level: Int, _ file: String = #file, _ function: String = #function, _ line: Int = #line, message: @escaping () -> String) {
     #if !TRACELOG_DISABLED
-        assert(LogLevel.rawTraceLevels.contains(level), "Trace levels are in the range of \(LogLevel.rawTraceLevels)")
-        
+        assert(LogLevel.validTraceLevels.contains(level), "Trace levels are in the range of \(LogLevel.validTraceLevels)")
+
         let derivedTag = derivedTagIfNil(file: file, tag: nil)
-        
-        Logger.logPrimitive(level: LogLevel(rawValue: LogLevel.trace1.rawValue + level - 1)!, tag: derivedTag, file: file, function: function, line: line, message: message)
+
+        Logger.logPrimitive(level: LogLevel(rawValue: LogLevel.trace1.rawValue + level - 1)!, tag: derivedTag, file: file, function: function, line: line, message: message) // swiftlint:disable:this force_unwrapping
     #endif
 }
 
-
-// MARK: Internal & private functions & Extensions.
+/// MARK: Internal & private functions & Extensions.
 
 @inline(__always)
-private
-func derivedTagIfNil(file: String, tag: String?) -> String {
+private func derivedTagIfNil(file: String, tag: String?) -> String {
     if let unwrappedTag = tag {
        return unwrappedTag
     } else {

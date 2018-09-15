@@ -9,7 +9,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "Coherence"
-  s.version          = "2.0.4"
+  s.version          = "2.1.0"
   s.summary          = "Coherence"
   s.description      = <<-DESC
                        Coherence is a collection of base frameworks that help set the groundwork for module development.
@@ -19,9 +19,9 @@ Pod::Spec.new do |s|
   s.author           = "Tony Stone"
   s.source           = { :git => "https://github.com/tonystone/coherence.git", :tag => s.version.to_s }
 
-  s.platform      = :ios, '8.0'
+  s.platform      = :ios, '9.0'
   s.requires_arc  = true
-  
+
   s.module_name   = 'Coherence'
   s.default_subspecs = ['Configuration', 'Stack']
 
@@ -39,6 +39,6 @@ Pod::Spec.new do |s|
       sp.source_files  = 'Sources/Stack/*'
   end
 
-  s.dependency 'TraceLog', "~> 2.0"
-  s.dependency 'TraceLog/ObjC', "~> 2.0"
+  s.dependency 'TraceLog', ">= 2.0", "< 5.0"
+  s.dependency 'TraceLog/ObjC', ">= 2.0", "< 5.0"
 end

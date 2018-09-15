@@ -23,29 +23,32 @@ import Swift
 /// LogLevels represent the logging level defined by TraceLog.  These parallel the
 /// environment variables that can be set to configure TraceLog.
 ///
-public enum LogLevel : Int {
-    
+public enum LogLevel: Int {
+
+    /// Used to turn logging completely off for the selected level (global, prefix, tag).
+    case off     = 0
+
     /// Represents the lowest level of logging and is used to log errors that happen in the system.
     case error   = 1
-    
+
     /// Represents a warning in the system.
     case warning = 2
-    
-    /// An informational message for the user.  Note, this is the mote common level used.
+
+    /// An informational message for the user.  Note, this is the most common level used.
     case info    = 3
-    
+
     /// The first level of low level tracing and debug logging.  Use this level for deeper information about the operation of a particular function.
     case trace1  = 4
-    
+
     /// The second level of low level tracing and debug logging.
     case trace2  = 5
-    
+
     /// The third level of low level tracing and debug logging.
     case trace3  = 6
-    
+
     /// The forth level of low level tracing and debug logging. Use this level to get complete logging information.  This level includes all logging in the system.
     case trace4  = 7
-    
+
     ///
     /// Note: Update below if you add another case statement to this enum
     ///
@@ -54,35 +57,45 @@ public enum LogLevel : Int {
     /// here so you remember to update it should a new case
     /// statement be added above.
     ///
-    internal static let allValues: [LogLevel]  = [.error,  .warning,  .info,  .trace1,  .trace2,  .trace3, .trace4]
+    internal static let allValues: [LogLevel]  = [.off, .error, .warning, .info, .trace1, .trace2, .trace3, .trace4]
 }
 
 /// Extend the LogLevel with the ability to compare them
-extension LogLevel : Comparable {}
+extension LogLevel: Comparable {}
 
 /// Returns true if lhs LogLevel is less than to rhs LogLevel
-public func <(lhs: LogLevel, rhs: LogLevel) -> Bool {
+public func < (lhs: LogLevel, rhs: LogLevel) -> Bool {
     return lhs.rawValue < rhs.rawValue
 }
 
 /// Returns true if lhs LogLevel is equal to rhs LogLevel
-public func ==(lhs: LogLevel, rhs: LogLevel) -> Bool {
+public func == (lhs: LogLevel, rhs: LogLevel) -> Bool {
     return lhs.rawValue == rhs.rawValue
 }
 
 internal extension LogLevel {
-    static var rawRange:       ClosedRange<Int> { get { return LogLevel.error.rawValue...LogLevel.trace4.rawValue } }
-    static var rawTraceLevels: ClosedRange<Int> { get { return 1...4 } }
+
+    ///
+    /// Note: validLogableRange is used to limit the values that can be passed to through from Objective-c when making a log primative call.
+    ///       The values in this range should only be thoughs that represent a log call.  OFF should not be part of this range because
+    ///       there is no LogOff call.
+    ///
+    static var validLogableRange: ClosedRange<Int> { return LogLevel.error.rawValue...LogLevel.trace4.rawValue }
+
+    ///
+    /// Used to validate the trace levels that are used in Objective-c
+    ///
+    static var validTraceLevels:  ClosedRange<Int> { return 1...4 }
 }
 
 internal extension String {
-    
+
     func asLogLevel () -> LogLevel? {
-        
+
         let lowercasedSelf = self.lowercased()
-        
+
         for level in LogLevel.allValues {
-            
+
             if lowercasedSelf == String(describing: level) {
                     return level
             }

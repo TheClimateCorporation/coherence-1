@@ -22,25 +22,25 @@ import Foundation
 
 ///
 /// A class that is used to capture and represent the os environment variables.
-/// 
-/// This class can be passed to TraceLog.configure to configure it using the 
+///
+/// This class can be passed to TraceLog.configure to configure it using the
 /// current Environment settings.
 ///
-/// Environment is also like a Swift Dictionary<String,String> so it can be used just
+/// Environment is also like a Swift Dictionary<String, String> so it can be used just
 /// like a dictionary including subscripting.
 ///
-public class Environment :  Collection, ExpressibleByDictionaryLiteral {
-    
+public class Environment: Collection, ExpressibleByDictionaryLiteral {
+
     public typealias Key   = String
     public typealias Value = String
-    
+
     /// The element type of a Environment: a tuple containing an individual
     /// key-value pair.
     public typealias Element = (key: Key, value: Value)
-    
+
     /// The index type of an Environment.
     public typealias Index = DictionaryIndex<Key, Value>
-    
+
     ///
     /// Creates a new Environment instance from a dictionary literal
     ///
@@ -53,10 +53,8 @@ public class Environment :  Collection, ExpressibleByDictionaryLiteral {
     ///
     public required init(dictionaryLiteral elements: (Key, Value)...) {
         storage = [Key: Value]()
-        
-        for (key, value) in elements {
-            storage[key] = value
-        }
+
+        elements.forEach( { self.storage[$0] = $1 } )
     }
 
     ///
@@ -70,29 +68,27 @@ public class Environment :  Collection, ExpressibleByDictionaryLiteral {
     ///
     ///     let environment =  Environment(values)
     ///
-    public init<T : Collection>(_ elements: T) where T.Iterator.Element == Element {
+    public init<T: Collection>(_ elements: T) where T.Iterator.Element == Element {
         storage = [Key: Value]()
-        
-        for (key, value) in elements {
-            storage[key] = value
-        }
+
+        elements.forEach( { self.storage[$0] = $1 } )
     }
-    
+
     ///
     /// Creates a new Environment instance and fills it with the variable
-    //  set in the current OS envirnment
+    ///  set in the current OS envirnment
     ///
-    /// The following example creates an Environment instance with the 
+    /// The following example creates an Environment instance with the
     /// current contents of the OS environment:
     ///
     ///     let environment =  Environment()
     ///
     public init() {
         let process  = ProcessInfo.processInfo
-        
+
         self.storage = process.environment
     }
-    
+
     ///
     /// Returns the position immediately after the given index.
     ///
@@ -100,24 +96,24 @@ public class Environment :  Collection, ExpressibleByDictionaryLiteral {
     ///   `endIndex`.
     /// - Returns: The index value immediately after `i`.
     ///
-    public func index(after i: Index) -> Index {
-        return storage.index(after: i)
+    public func index(after index: Index) -> Index {
+        return storage.index(after: index)
     }
 
     ///
     /// Always zero, which is the index of the first element when non-empty.
     ///
-    public var startIndex : Index {
+    public var startIndex: Index {
         return storage.startIndex
     }
-    
+
     ///
     /// A "past-the-end" element index; the successor of the last valid subscript argument.
     ///
-    public var endIndex  : Index {
+    public var endIndex: Index {
         return storage.endIndex
     }
-    
+
     ///
     /// Accesses the element at the specified position.
     ///
@@ -132,10 +128,10 @@ public class Environment :  Collection, ExpressibleByDictionaryLiteral {
     ///   must be a valid index of the Environment that is not equal to the
     ///   `endIndex` property.
     ///
-    public subscript(position : Index) -> Element {
+    public subscript(position: Index) -> Element {
         return storage[position]
     }
-    
+
     ///
     /// Set or get the element with the specified key.
     ///
@@ -159,11 +155,11 @@ public class Environment :  Collection, ExpressibleByDictionaryLiteral {
         get {
             return storage[key]
         }
-        
+
         set {
             storage[key] = newValue
         }
     }
-    
+
     fileprivate var storage: [Key: Value]
 }

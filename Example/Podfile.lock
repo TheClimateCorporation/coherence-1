@@ -1,36 +1,40 @@
 PODS:
-  - Coherence (2.0.4):
-    - Coherence/Configuration (= 2.0.4)
-    - Coherence/Stack (= 2.0.4)
-    - TraceLog (~> 2.0)
-    - TraceLog/ObjC (~> 2.0)
-  - Coherence/Configuration (2.0.4):
+  - Coherence (2.1.0):
+    - Coherence/Configuration (= 2.1.0)
+    - Coherence/Stack (= 2.1.0)
+    - TraceLog (< 5.0, >= 2.0)
+    - TraceLog/ObjC (< 5.0, >= 2.0)
+  - Coherence/Configuration (2.1.0):
     - Coherence/ConfigurationCore
-    - TraceLog (~> 2.0)
-    - TraceLog/ObjC (~> 2.0)
-  - Coherence/ConfigurationCore (2.0.4):
-    - TraceLog (~> 2.0)
-    - TraceLog/ObjC (~> 2.0)
-  - Coherence/Stack (2.0.4):
-    - TraceLog (~> 2.0)
-    - TraceLog/ObjC (~> 2.0)
-  - TraceLog (2.0.1):
-    - TraceLog/Swift (= 2.0.1)
-  - TraceLog/ObjC (2.0.1):
+    - TraceLog (< 5.0, >= 2.0)
+    - TraceLog/ObjC (< 5.0, >= 2.0)
+  - Coherence/ConfigurationCore (2.1.0):
+    - TraceLog (< 5.0, >= 2.0)
+    - TraceLog/ObjC (< 5.0, >= 2.0)
+  - Coherence/Stack (2.1.0):
+    - TraceLog (< 5.0, >= 2.0)
+    - TraceLog/ObjC (< 5.0, >= 2.0)
+  - TraceLog (4.0.1):
+    - TraceLog/Swift (= 4.0.1)
+  - TraceLog/ObjC (4.0.1):
     - TraceLog/Swift
-  - TraceLog/Swift (2.0.1)
+  - TraceLog/Swift (4.0.1)
 
 DEPENDENCIES:
   - Coherence (from `../`)
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - TraceLog
 
 EXTERNAL SOURCES:
   Coherence:
     :path: "../"
 
 SPEC CHECKSUMS:
-  Coherence: 98a6afa84d72ce0565d43a701091dff1493fc997
-  TraceLog: 37035b5d79653592f949a8cd50ec044a45d6dfc1
+  Coherence: 668a0ffa4aab6d8ca5d29b3b55cc81dc893819ad
+  TraceLog: 8c967afc696f1d92ef372950aeccfd797634fd91
 
-PODFILE CHECKSUM: 7c7691c49031c69f23034d5a0df73dbc5aaaa7fb
+PODFILE CHECKSUM: af8b9b6b6fac82894a7a6f237d382d41dfe2da42
 
-COCOAPODS: 1.2.0
+COCOAPODS: 1.5.2
