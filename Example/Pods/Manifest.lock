@@ -23,18 +23,14 @@ PODS:
 DEPENDENCIES:
   - Coherence (from `../`)
 
-SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
-    - TraceLog
-
 EXTERNAL SOURCES:
   Coherence:
-    :path: "../"
+    :path: ../
 
 SPEC CHECKSUMS:
-  Coherence: 668a0ffa4aab6d8ca5d29b3b55cc81dc893819ad
+  Coherence: a5db7e49436f176a652276b2cd7c2968def56b13
   TraceLog: 8c967afc696f1d92ef372950aeccfd797634fd91
 
 PODFILE CHECKSUM: af8b9b6b6fac82894a7a6f237d382d41dfe2da42
 
-COCOAPODS: 1.5.2
+COCOAPODS: 1.4.0
