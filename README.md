@@ -7,7 +7,7 @@
    <img src="https://img.shields.io/cocoapods/v/Coherence.svg?style=flat" alt="Pod version">
 </a>
 <a href="https://github.com/tonystone/coherence/" target="_blank">
-   <img src="https://img.shields.io/badge/Swift-3.0-orange.svg?style=flat" alt="Swift 3.0">
+   <img src="https://img.shields.io/badge/Swift-4.1-orange.svg?style=flat" alt="Swift 4.1">
 </a>
 [![Build Status](https://travis-ci.org/tonystone/coherence.svg?branch=master)](https://travis-ci.org/tonystone/coherence)
 <a href="https://codecov.io/gh/tonystone/coherence">

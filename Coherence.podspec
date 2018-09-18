@@ -17,7 +17,7 @@ Pod::Spec.new do |s|
   s.homepage         = "https://github.com/tonystone/coherence"
   s.license          = 'Apache License, Version 2.0'
   s.author           = "Tony Stone"
-  s.source           = { :git => "https://github.com/tonystone/coherence.git", :tag => s.version.to_s }
+  s.source           = { :git => "https://github.com/TheClimateCorporation/coherence-2-x-swift-4.git", :tag => s.version.to_s }
 
   s.platform      = :ios, '9.0'
   s.requires_arc  = true
